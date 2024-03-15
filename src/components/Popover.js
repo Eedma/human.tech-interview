@@ -105,7 +105,6 @@ const Popover = ({onClose, title, children, buttonPrimary, buttonSecondary, isLo
                                 className={classes.secondaryButton}
                                 width="auto"
                                 onClick={buttonSecondary.onClick}
-                                fullWidth={!buttonPrimary}
                                 disabled={buttonSecondary.disabled}
                             >
                                 {buttonSecondary.text}
@@ -115,7 +114,6 @@ const Popover = ({onClose, title, children, buttonPrimary, buttonSecondary, isLo
                             <Button
                                 width="auto"
                                 onClick={buttonPrimary.onClick}
-                                fullWidth={!buttonSecondary}
                                 disabled={buttonPrimary.disabled}
                             >
                                 {buttonPrimary.text}
