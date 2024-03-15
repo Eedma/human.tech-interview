@@ -9,8 +9,10 @@ import {validationSchema} from "./model"
 import dayjs from "dayjs"
 import {TASK_MODEL} from "../../../models";
 import DatePickerInput from "../../../components/DatePickerInput";
-import Select from "../../../components/Select";
 import {TASK_PRIORITIES} from "../../../models/task";
+import ControlledSelect from "../../../components/ControlledSelect"
+import { handleApiError, retrieveSingleValueForRs } from "../../../utilities/helpers"
+import useError from "../../../hooks/useError"
 
 const useStyles = createUseStyles(theme => ({
     root: {
@@ -49,20 +51,10 @@ const useStyles = createUseStyles(theme => ({
 }))
 
 const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
-
     const [date, setDate] = useState(task[TASK_MODEL.date])
-
-    const classes = useStyles()
-
-    const onSubmit = (formValues) => {
-        onUpdateCb && onUpdateCb({...task},{
-            ...task,
-            ...formValues,
-            [TASK_MODEL.effort]: formValues[TASK_MODEL.effort].value,
-            date: dayjs(date).format("YYYY-MM-DD")
-        })
-        onClose();
-    }
+    const [priority, setPriority] = useState(retrieveSingleValueForRs(TASK_PRIORITIES,task[TASK_MODEL.effort]))
+    const showError = useError()
+    const classes = useStyles() 
 
     const {handleSubmit, register, control, reset, setValue, formState: {errors}} = useForm({
         shouldUnregister: false,
@@ -75,11 +67,36 @@ const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
             [TASK_MODEL.completed]: !!task[TASK_MODEL.completed],
             [TASK_MODEL.description]: task[TASK_MODEL.description],
             [TASK_MODEL.date]: task[TASK_MODEL.date],
-            [TASK_MODEL.effort]: +task[TASK_MODEL.effort],
+            [TASK_MODEL.effort]: task[TASK_MODEL.effort],
         }
     })
 
     const description = useWatch({name: TASK_MODEL.description, control})
+    const completed = useWatch({name: TASK_MODEL.completed, control})
+
+    const onSubmit = async () => {
+        
+        const updatedTask = {
+            ...task,
+            [TASK_MODEL.effort]: priority.value,
+            [TASK_MODEL.date]: dayjs(date).format("YYYY-MM-DD"),
+            [TASK_MODEL.completed]: completed,
+            [TASK_MODEL.description]: description,
+            [TASK_MODEL.updated_at]: dayjs(new Date()).format("YYYY-MM-DD")
+        }
+
+        try {
+            await onUpdateCb(task, updatedTask)
+        }catch (error){
+            console.log('error', error)
+            handleApiError({
+                error,
+                handleGeneralError: showError
+            })
+        }
+
+        onClose()
+    }
 
     return (
         <Popover
@@ -117,13 +134,16 @@ const EditTaskModal = ({onClose, onUpdateCb, task}) =>  {
                     <DatePickerInput
                         value={date}
                         callback={setDate}
+                        
                     />
-                    <Select
-                        control={control}
-                        name={TASK_MODEL.effort}
-                        placeholder={'Effort'}
+                    <ControlledSelect
+                        onChangeCallback={setPriority}
+                        onClear={() => setPriority(false)}
+                        name={'priority'}
+                        placeholder={'Priority'}
                         isClearable
                         menuPlacement={'top'}
+                        value={priority}
                         options={TASK_PRIORITIES}
                     />
                 </div>
