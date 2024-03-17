@@ -13,6 +13,7 @@ import {handleApiError} from "../../utilities/helpers";
 import useError from "../../hooks/useError";
 import Logo from "../../components/Logo";
 import useUser from "../../hooks/useUser";
+import { enqueueSnackbar } from "notistack";
 
 const useStyles = createUseStyles(theme => ({
     formTitle: {
@@ -81,6 +82,7 @@ const Login = () => {
                 handleGeneralError: showError,
                 handleFormError: setError
             })
+            enqueueSnackbar('Wrong credentials', {variant: "error", autoHideDuration: 3000})
         }
     }
 

@@ -8,6 +8,7 @@ import {TASK_MODEL} from "../models";
 import dayjs from "dayjs";
 import {effortRenderer} from "../utilities/helpers";
 import {useWindowSize} from "../hooks/useWindowSize";
+import { useSnackbar } from "notistack";
 
 const useStyles = createUseStyles(theme => ({
     task: {
@@ -124,6 +125,14 @@ const Task = forwardRef((
     const { width } = useWindowSize();
     const isMobile = width < 768;
     const classes = useStyles();
+    const { enqueueSnackbar } = useSnackbar()
+
+    const updateCbHandler = (task) => {
+        onUpdateCb({...task},{...task, [TASK_MODEL.completed]: !task[TASK_MODEL.completed]})
+        if(!task[TASK_MODEL.completed]){
+            enqueueSnackbar('Task completed', {variant: "success", autoHideDuration: 3000})
+        }
+    }
 
     return <div className={cx(classes.task, isLast && classes.last)} ref={ref} {...draggableProps}>
         {isMobile ? <>
@@ -150,7 +159,7 @@ const Task = forwardRef((
                 <span className={classes.check}>
                     <Checkbox className={classes.doneCheck}
                               checked={task?.[TASK_MODEL.completed]}
-                              onChange={() => onUpdateCb({...task},{...task, [TASK_MODEL.completed]: !task[TASK_MODEL.completed]})}
+                              onChange={() => updateCbHandler(task)}
                     />
                 </span>
                 <span className={classes.text}> {task?.[TASK_MODEL.description]} </span>

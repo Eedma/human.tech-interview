@@ -3,6 +3,7 @@ import {Outlet} from "react-router-dom";
 import Header from "../../components/Header";
 import useError from "../../hooks/useError";
 import useAlert from "../../hooks/useAlert";
+import { SnackbarProvider } from 'notistack';
 
 const useStyles = createUseStyles((theme) => ({
 
@@ -17,7 +18,10 @@ const PrivateLayout = () => {
     return <>
         <Header/>
             <main className={classes.main}>
-                <Outlet/>
+                <SnackbarProvider >
+                    <Outlet/>
+                </SnackbarProvider>
+                {/* <div className={classes.alertContainer}>alert box alert box</div> */}
             </main>
     </>
 }

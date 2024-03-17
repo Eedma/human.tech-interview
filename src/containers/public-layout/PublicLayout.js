@@ -3,6 +3,8 @@ import {Outlet} from "react-router-dom";
 import useError from "../../hooks/useError";
 import useAlert from "../../hooks/useAlert";
 import {useViewportSize} from "../../hooks/useViewportSize";
+import { useEffect } from 'react';
+import { SnackbarProvider, enqueueSnackbar } from 'notistack';
 
 
 const useStyles = createUseStyles((theme) => ({
@@ -21,9 +23,16 @@ const PublicLayout = () => {
     const showError = useError()
     const classes = useStyles({vh})
 
+    console.log('error', showError)
+
+
+
     return <>
             <main className={classes.main}>
-                <Outlet/>
+                <SnackbarProvider>
+                    <Outlet/>
+                </SnackbarProvider>
+                
             </main>
     </>
 }
