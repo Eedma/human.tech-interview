@@ -1,11 +1,11 @@
 import {createUseStyles} from "react-jss";
-import SearchBar from "../../../components/SearchBar";
-import FilterButton from "../../../components/FilterButton";
+import SearchBar from "./SearchBar";
+import FilterButton from "./FilterButton";
 import {useNavigate} from "react-router-dom";
-import {ROUTE_COMPLETED} from "../../../utilities/constants";
-import ControlledSelect from "../../../components/ControlledSelect";
-import DatePickerInput from "../../../components/DatePickerInput";
-import {TASK_PRIORITIES} from "../../../models/task";
+import {ROUTE_COMPLETED} from "../utilities/constants";
+import ControlledSelect from "./ControlledSelect";
+import DatePickerInput from "./DatePickerInput";
+import {TASK_PRIORITIES} from "../models/task";
 
 const useStyles = createUseStyles(theme => ({
     filterBar: {

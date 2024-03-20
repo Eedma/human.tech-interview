@@ -15,11 +15,12 @@ import {
 } from '../../utilities/helpers'
 import Task from '../../components/Task'
 import HomeTableHeader from '../home/home-table-heading'
-import FilterBar from '../home/filter-bar/FilterBar'
+import FilterBar from '../../components/FilterBar'
 import { useWindowSize } from '../../hooks/useWindowSize'
 import EditTaskModal from '../home/EditTaskModal'
 import { TASK_MODEL } from '../../models'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import Spinner, { SPINNER_POSITIONS } from '../../components/Spinner'
 
 const useStyles = createUseStyles(theme => ({
     taskBodyRoot: {
@@ -54,6 +55,7 @@ const History = () => {
 
     const [hasMore, setHasMore] = useState(null)
     const [index, setIndex] = useState(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     const classes = useStyles()
 
@@ -83,6 +85,7 @@ const History = () => {
     }
 
     const fetchNextData = async () => {
+        setIsLoading(true)
         try{
             const {data} = await TasksAPI.getNextTaskCompleted(index)
             const groupNewData = groupByDate(data.data)
@@ -92,12 +95,14 @@ const History = () => {
             if(data.current_page < data.last_page){
                 setIndex(data.next_page_url.split("?")[1])
             }
+
         } catch (error){
             handleApiError({
                 error,
                 handleGeneralError: showError,
             })
         }
+        setIsLoading(false)
     }
 
     /**
@@ -233,7 +238,7 @@ const History = () => {
                 onPriorityHandler={setPriority}
             />
             <HomeTableHeader />
-            <InfiniteScroll dataLength={tasks.length} hasMore={hasMore} next={fetchNextData} loader={<div>loading...</div>}>
+            <InfiniteScroll dataLength={tasks.length} hasMore={hasMore} next={fetchNextData} loader={isLoading && <Spinner position={SPINNER_POSITIONS.ABSOLUTE} overlay/>}>
             <Container className={classes.taskBodyRoot}>
                 <Row>
                     
