@@ -225,7 +225,8 @@ const Homepage = () => {
                             dateIsInRange(t[TASK_MODEL.date], dateFilter?.[0], dateFilter?.[1]) : true
                         const isInSearch = searchInput ? t[TASK_MODEL.description].includes(searchInput) : true
                         const isInPriority = priority ? t[TASK_MODEL.effort] === priority.value : true
-                        return isInDate && isInSearch && isInPriority
+                        const isNotCompleted = t[TASK_MODEL.completed] === false
+                        return isInDate && isInSearch && isInPriority && isNotCompleted
                     })
                     if(filteredDate.length) filtered[date] = filteredDate
                 })

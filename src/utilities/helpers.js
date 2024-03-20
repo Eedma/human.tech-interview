@@ -118,3 +118,22 @@ export const retrieveSingleValueForRs = (options, value) => {
         (option) => option.value.toString() === value.toString()
     )
 }
+
+export const mergeObjects = (obj1, obj2) => {
+    const mergedObj = {}
+    // already know the structure of the object, can avoid checks over arrays
+
+    for(let key in obj1){
+        // concat array with same key
+        mergedObj[key] = obj1[key].concat(obj2[key])
+    }
+
+    for(let key in obj2){
+        if(!mergedObj.hasOwnProperty(key)){
+            // copy array in obj2 because not merged yet
+            mergedObj[key] = obj2[key]
+        }
+    }
+
+    return mergedObj
+}
