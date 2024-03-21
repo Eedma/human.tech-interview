@@ -54,6 +54,10 @@ const Homepage = () => {
     const [openedTask, setOpenedTask] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
 
+    const [rawData, setRawData] = useState([])
+    const [filteredResults, setFilteredResults] = useState([])
+
+
     const classes = useStyles();
 
     const {width} = useWindowSize()
@@ -66,6 +70,7 @@ const Homepage = () => {
     const fetchTasks = async () => {
         try {
             const {data} = await TasksAPI.getTasks();
+            setRawData(data)
             setTasks(groupByDate(data));
         } catch (error) {
             handleApiError({
@@ -223,18 +228,36 @@ const Homepage = () => {
                     const filteredDate = tasks[date].filter(t => {
                         const isInDate = dateFilter ?
                             dateIsInRange(t[TASK_MODEL.date], dateFilter?.[0], dateFilter?.[1]) : true
-                        const isInSearch = searchInput ? t[TASK_MODEL.description].includes(searchInput) : true
+                        /* const isInSearch = searchInput ? t[TASK_MODEL.description].includes(searchInput) : true */
                         const isInPriority = priority ? t[TASK_MODEL.effort] === priority.value : true
                         const isNotCompleted = t[TASK_MODEL.completed] === false
-                        return isInDate && isInSearch && isInPriority && isNotCompleted
+                        return isInDate /* && isInSearch */ && isInPriority && isNotCompleted
                     })
                     if(filteredDate.length) filtered[date] = filteredDate
                 })
             }
             return filtered
         },
-        [tasks, dateFilter, searchInput, priority]
+        [tasks, dateFilter, /* searchInput, */ priority]
     )
+
+    const editTask = (task) => {
+        setOpenedTask(task)
+        setShowEditModal(true)                                                              
+    }
+
+    const filterSearchResults = () => {
+        let filterData = rawData.filter(el => {
+            if(el.text.toLowerCase().includes(searchInput)){
+                return el
+            }
+        })
+        return filterData.slice(0,3)
+    }
+
+    useEffect(()=>{
+        setFilteredResults(filterSearchResults())
+    },[searchInput] )
 
     return <>
         <FilterBar
@@ -242,6 +265,8 @@ const Homepage = () => {
             onDateChangeHandler={setDateFilters}
             dateFilter={dateFilter}
             onPriorityHandler={setPriority}
+            searchResults={filteredResults}
+            openEditModal={editTask}
         />
         <HomeTableHeader/>
         <Container className={classes.taskBodyRoot}>
@@ -265,10 +290,7 @@ const Homepage = () => {
                                                               ref={provided.innerRef}
                                                               onDeleteCb={onDeleteTask}
                                                               onUpdateCb={onEditTask}
-                                                              onEditCb={() =>{
-                                                                  setOpenedTask(task)
-                                                                  setShowEditModal(true)
-                                                              }}
+                                                              onEditCb={() =>editTask(task)}
                                                               draggableProps={provided.draggableProps}
                                                               dragHandleProps={provided.dragHandleProps}
                                                         />

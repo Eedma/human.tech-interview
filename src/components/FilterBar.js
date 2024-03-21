@@ -6,6 +6,7 @@ import {ROUTE_COMPLETED} from "../utilities/constants";
 import ControlledSelect from "./ControlledSelect";
 import DatePickerInput from "./DatePickerInput";
 import {TASK_PRIORITIES} from "../models/task";
+import { SearchResultsList } from "./SearchResultsList";
 
 const useStyles = createUseStyles(theme => ({
     filterBar: {
@@ -67,7 +68,7 @@ const useStyles = createUseStyles(theme => ({
     }
 }))
 
-const FilterBar = ({onPriorityHandler = Function.prototype, onSearchHandler = Function.prototype, dateFilter, onDateChangeHandler = Function.prototype}) => {
+const FilterBar = ({onPriorityHandler = Function.prototype, onSearchHandler = Function.prototype, dateFilter, onDateChangeHandler = Function.prototype, searchResults, openEditModal}) => {
 
     const navigate = useNavigate();
     const classes = useStyles();
@@ -91,6 +92,7 @@ const FilterBar = ({onPriorityHandler = Function.prototype, onSearchHandler = Fu
         </div>
         <div className={classes.search}>
             <SearchBar className={classes.searchBar} onSearchCallback={onSearchHandler}/>
+            { searchResults ? <SearchResultsList results={searchResults} openEditModal={openEditModal}/> : null }         
         </div>
         <div className={classes.searchMobile}>
             <SearchBar className={classes.searchBar} onSearchCallback={onSearchHandler}/>

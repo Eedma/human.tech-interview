@@ -46,7 +46,8 @@ const SearchBar = ({onSearchCallback, className , collapsed = false, ...rest}) =
                    value={searchText}
                    statusIconCallback={() => setSearchText('')}
                    statusIcon={searchText && <CrossIcon width={12} height={12}/>}
-                   onChange={e => setSearchText(e.target.value)}/>
+                   onChange={e => setSearchText(e.target.value)}
+                   inputProps={{type: "text", autoComplete: "off"}}/>
         </div>
 }
 
